@@ -17,8 +17,8 @@ maml_zoo_path = '/'.join(os.path.realpath(os.path.dirname(__file__)).split('/')[
 
 def main(config):
     baseline = LinearFeatureBaseline()
-    # env = normalize(HalfCheetahRandDirecEnv())
-    env = HopperRandParamsEnv(3.5)
+    env = normalize(HalfCheetahRandDirecEnv())
+    # env = HopperRandParamsEnv(3.5)
     policy = MetaGaussianMLPPolicy(
             name="meta-policy",
             obs_dim=np.prod(env.observation_space.shape),

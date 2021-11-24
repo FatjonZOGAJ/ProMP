@@ -10,7 +10,7 @@ dependencies:
         - joblib==0.12.2
         - numpy>=1.15
         - PyPrind
-        - tensorflow
+        - tensorflow=1.15
         - cloudpickle
         - click
         - boto3

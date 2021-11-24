@@ -15,6 +15,9 @@ import numpy as np
 
 maml_zoo_path = '/'.join(os.path.realpath(os.path.dirname(__file__)).split('/')[:-1])
 
+from tensorflow.python.util import deprecation
+deprecation._PRINT_DEPRECATION_WARNINGS = False
+
 def main(config):
     baseline = LinearFeatureBaseline()
     env = rl2env(HalfCheetahRandDirecEnv())
