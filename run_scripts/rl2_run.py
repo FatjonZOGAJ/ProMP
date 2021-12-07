@@ -1,5 +1,15 @@
+import argparse
+import sys
+import os
+import sys
+module_path = os.path.abspath(os.getcwd() + '//..')
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from maml_zoo.baselines.linear_baseline import LinearFeatureBaseline
 from maml_zoo.envs.mujoco_envs.half_cheetah_rand_direc import HalfCheetahRandDirecEnv
+from maml_zoo.envs.mujoco_envs.ant_rand_goal import AntRandGoalEnv
 from maml_zoo.envs.rl2_env import rl2env
 from maml_zoo.algos.vpg import VPG
 from maml_zoo.algos.ppo import PPO
@@ -20,7 +30,7 @@ deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 def main(config):
     baseline = LinearFeatureBaseline()
-    env = rl2env(HalfCheetahRandDirecEnv())
+    env = rl2env(eval(config['env'])())
     obs_dim = np.prod(env.observation_space.shape) + np.prod(env.action_space.shape) + 1 + 1
     policy = GaussianRNNPolicy(
             name="meta-policy",
@@ -67,10 +77,20 @@ def main(config):
 
 
 if __name__=="__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--meta_batch_size", type=int)
+    parser.add_argument("--n_itr", type=int)
+    parser.add_argument("--exp_name", type=str)
+    parser.add_argument("--env", type=str)
+    args = parser.parse_args(sys.argv[1:])
+
     idx = np.random.randint(0, 1000)
-    data_path = maml_zoo_path + '/data/rl2/test_%d' % idx
+    data_path = maml_zoo_path + f'/data/rl2/test_{args.exp_name}_{idx}'
     logger.configure(dir=data_path, format_strs=['stdout', 'log', 'csv'],
                      snapshot_mode='last_gap')
     config = json.load(open(maml_zoo_path + "/configs/rl2_config.json", 'r'))
+    for k, v in args._get_kwargs():
+        config[k] = v
+        print(k, v)
     json.dump(config, open(data_path + '/params.json', 'w'))
     main(config)

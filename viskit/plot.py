@@ -8,6 +8,7 @@ from viskit.frontend import reload_data
 
 import matplotlib.pyplot as plt
 
+
 def load_data():
     global exps_data
     global plottable_keys
@@ -27,16 +28,16 @@ def plot_data():
         x = progress[x_col]
         y = progress[y_col]
 
-        plt.plot(x, y, label = data['params']['algo'] if 'algo' in data['params'] else 'PEARL')
+        plt.plot(x, y, label=data['params']['algo'] if 'algo' in data['params'] else
+        ('PEARL' if data['params']['exp_name'].startswith('2021_') else 'MACAW'))
 
     plt.xscale('log')
     plt.legend()
     plt.ylabel('Average Reward')
     plt.xlabel('Steps')
-    plt.title('Cheetah-Direction Environment')
+    plt.title('Half-Cheetah-Direction Environment')
+    plt.grid()
     plt.savefig(f'{path}/comparison.pdf')
-
-
 
 
 if __name__ == "__main__":
