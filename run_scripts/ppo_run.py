@@ -1,3 +1,11 @@
+import argparse
+import os
+import sys
+module_path = os.path.abspath(os.getcwd() + '//..')
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from maml_zoo.baselines.linear_baseline import LinearFeatureBaseline
 from maml_zoo.envs.point_envs.point_env_2d import MetaPointEnv
 from maml_zoo.envs.mujoco_envs.half_cheetah_rand_direc import HalfCheetahRandDirecEnv
@@ -75,10 +83,21 @@ def main(config):
     trainer.train()
 
 if __name__=="__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--meta_batch_size", type=int)
+    parser.add_argument("--n_itr", type=int)
+    parser.add_argument("--rollouts_per_meta_task", type=int, default=20)
+    parser.add_argument("--exp_name", type=str)
+    parser.add_argument("--env", type=str)
+    args = parser.parse_args(sys.argv[1:])
+
     idx = np.random.randint(0, 1000)
-    data_path = maml_zoo_path + '/data/ppo/test_%d' % idx
+    data_path = maml_zoo_path + f'/data/ppo/test_{args.exp_name}_{idx}'
     logger.configure(dir=data_path, format_strs=['stdout', 'log', 'csv'],
                      snapshot_mode='last_gap')
     config = json.load(open(maml_zoo_path + "/configs/ppo_maml_config.json", 'r'))
+    for k, v in args._get_kwargs():
+        config[k] = v
+        print(k, v)
     json.dump(config, open(data_path + '/params.json', 'w'))
     main(config)
