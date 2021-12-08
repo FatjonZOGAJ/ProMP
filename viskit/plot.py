@@ -37,7 +37,7 @@ def plot_data():
     plt.xlabel('Steps')
     plt.title('Half-Cheetah-Direction Environment')
     plt.grid()
-    plt.savefig(f'{path}/comparison.pdf')
+    plt.savefig(f'{path}/{args.filename}')
 
 
 if __name__ == "__main__":
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_columns", type=str, nargs='*')
     parser.add_argument("--step_columns", type=str, nargs='*')
     parser.add_argument("--data_paths", type=str, nargs='*')
+    parser.add_argument("--filename", type=str, default='comparison.pdf')
     parser.add_argument("--disable-variant", default=False, action='store_true')
     args = parser.parse_args(sys.argv[1:])
 
