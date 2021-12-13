@@ -4,7 +4,7 @@ import numpy as np
 
 
 class MetaEnv(Env):
-    def sample_tasks(self, n_tasks):
+    def sample_tasks(self, n_tasks, evaluate_out_of_sample_low=0, evaluate_out_of_sample_high=2 * np.pi):
         """
         Samples task of the meta-environment
 

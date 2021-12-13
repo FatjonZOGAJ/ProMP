@@ -5,13 +5,20 @@ import gym
 from gym.envs.mujoco.mujoco_env import MujocoEnv
 
 class AntRandGoalEnv(MetaEnv, gym.utils.EzPickle, MujocoEnv):
-    def __init__(self):
+    def __init__(self, evaluate_out_of_sample_low=0, evaluate_out_of_sample_high=2 * np.pi):
+        self.evaluate_out_of_sample_low = evaluate_out_of_sample_low # TODO current implementation only works with 0
+        self.evaluate_out_of_sample_high = evaluate_out_of_sample_high
         self.set_task(self.sample_tasks(1)[0])
         MujocoEnv.__init__(self, 'ant.xml', 5)
         gym.utils.EzPickle.__init__(self)
 
-    def sample_tasks(self, n_tasks):
-        a = np.random.random(n_tasks) * 2 * np.pi
+    def sample_tasks(self, n_tasks, evaluate_out_of_sample=False):
+        offset = 0
+        max = self.evaluate_out_of_sample_high # 2 * np.pi
+        if evaluate_out_of_sample:  # for testing
+            offset = self.evaluate_out_of_sample_high
+            max = (2 * np.pi - self.evaluate_out_of_sample_high)
+        a = offset + np.random.random(n_tasks) * max
         r = 3 * np.random.random(n_tasks) ** 0.5
         return np.stack((r * np.cos(a), r * np.sin(a)), axis=-1)
 

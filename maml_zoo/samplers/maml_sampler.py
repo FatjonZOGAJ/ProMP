@@ -49,11 +49,11 @@ class MAMLSampler(Sampler):
         else:
             self.vec_env = MAMLIterativeEnvExecutor(env, self.meta_batch_size, self.envs_per_task, self.max_path_length)
 
-    def update_tasks(self):
+    def update_tasks(self, evaluate_out_of_sample=False):
         """
         Samples a new goal for each meta task
         """
-        tasks = self.env.sample_tasks(self.meta_batch_size)
+        tasks = self.env.sample_tasks(self.meta_batch_size, evaluate_out_of_sample=evaluate_out_of_sample)
         assert len(tasks) == self.meta_batch_size
         self.vec_env.set_tasks(tasks)
 

@@ -25,6 +25,12 @@ def plot_data():
     for x_col, y_col, data in zip(args.step_columns, args.data_columns, exps_data):
         progress = data.progress
         print(x_col, y_col, len(data.progress))
+        if args.filename == 'pearl_n_tasks_comparison.pdf':
+            print('N train steps:', data.progress['Number of train steps total'][-1])
+            print('N train tasks:', data.params['n_train_tasks'])
+            print('N iterations :', data.params['num_iterations'])
+        print('--', data.progress.keys())
+        print('--', data.params)
         x = progress[x_col]
         y = progress[y_col]
 

@@ -31,7 +31,8 @@ class Trainer(object):
             start_itr=0,
             num_inner_grad_steps=1,
             sess=None,
-            ):
+            evaluate_out_of_sample=False,
+            num_eval_grad_steps=1):
         self.algo = algo
         self.env = env
         self.sampler = sampler
@@ -41,6 +42,8 @@ class Trainer(object):
         self.n_itr = n_itr
         self.start_itr = start_itr
         self.num_inner_grad_steps = num_inner_grad_steps
+        self.evaluate_out_of_sample = evaluate_out_of_sample
+        self.num_eval_grad_steps = num_eval_grad_steps
         if sess is None:
             sess = tf.Session()
         self.sess = sess
@@ -69,6 +72,58 @@ class Trainer(object):
                 logger.log("\n ---------------- Iteration %d ----------------" % itr)
                 logger.log("Sampling set of tasks/goals for this meta-batch...")
 
+
+                """ ------------------ Out of Sample Policy Evaluation ---------------------"""
+                # TODO: need to copy algo, MAML sampler and policy and ensure that these point to the same objects within
+                # TODO: check if we need to do this at beginning or end of outer iteration; RE: pre_update_mode
+                pre_weight = self.algo.policy.get_param_values().values()
+                policy_copy = self.policy #copy.deepcopy(self.policy)
+                sampler_copy = self.sampler #copy.deepcopy(self.sampler)
+                sampler_copy.policy = policy_copy
+                algo_copy = self.algo #copy.deepcopy(self.algo)
+                algo_copy.policy = policy_copy
+
+                sampler_copy.update_tasks(evaluate_out_of_sample=self.evaluate_out_of_sample)
+                policy_copy.switch_to_pre_update()  # Switch to pre-update policy
+                logger.log("Evaluating policy out of sample...")
+                for step in range(self.num_eval_grad_steps+1):
+                    logger.log('** Eval Step ' + str(step) + ' **')
+
+                    """ -------------------- Sampling --------------------------"""
+
+                    logger.log("Obtaining samples...")
+                    #time_env_sampling_start = time.time()
+                    # TODO: from eval
+                    paths = sampler_copy.obtain_samples(log=True, log_prefix='Eval Step_%d-' % step)
+                    #list_sampling_time.append(time.time() - time_env_sampling_start)
+                    #all_paths.append(paths)
+
+                    """ ----------------- Processing Samples ---------------------"""
+
+                    logger.log("Processing samples...")
+                    #time_proc_samples_start = time.time()
+                    samples_data = self.sample_processor.process_samples(paths, log='all', log_prefix='Eval Step_%d-' % step)
+                    #all_samples_data.append(samples_data)
+                    #list_proc_samples_time.append(time.time() - time_proc_samples_start)
+
+                    # Logging manually on our copied objects
+                    #self.log_diagnostics(sum(list(paths.values()), []), prefix='Eval Step_%d-' % step)
+                    sum_paths = sum(list(paths.values()), [])
+                    self.env.log_diagnostics(sum_paths, 'Eval')
+                    policy_copy.log_diagnostics(sum_paths, 'Eval')
+                    self.baseline.log_diagnostics(sum_paths, 'Eval')
+
+                    """ ------------------- Inner Policy Update --------------------"""
+
+                    #time_inner_step_start = time.time()
+                    if step < self.num_eval_grad_steps:
+                        logger.log("Computing inner policy updates...")
+                        # TODO: from eval on copy of algo
+                        algo_copy._adapt(samples_data)
+                    #list_inner_step_time.append(time.time() - time_inner_step_start)
+                #total_inner_time = time.time() - start_total_inner_time
+
+                # TODO: maybe copy pre_update_weights beforehand too?
                 self.sampler.update_tasks()
                 self.policy.switch_to_pre_update()  # Switch to pre-update policy
 
