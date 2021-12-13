@@ -43,6 +43,9 @@ Manually install Mesa if 'mujoco py install error - fatal error: GL/osmesa.h: No
 ```
 # https://github.com/openai/mujoco-py/issues/96#issuecomment-601887590  
 # https://github.com/openai/mujoco-py/issues/96#issuecomment-346685411
+# URLs taken from 
+# https://centos.pkgs.org/7/centos-x86_64/mesa-libOSMesa-18.3.4-10.el7.x86_64.rpm.html
+# https://centos.pkgs.org/7/centos-x86_64/mesa-libOSMesa-devel-18.3.4-10.el7.x86_64.rpm.html
 mkdir rpm
 cd rpm
 for url in http://mirror.centos.org/centos/7/os/x86_64/Packages/mesa-libOSMesa-18.3.4-10.el7.x86_64.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/mesa-libOSMesa-devel-18.3.4-10.el7.x86_64.rpm; do
@@ -51,7 +54,7 @@ done
 
 export PATH="$PATH:$HOME/rpm/usr/bin"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/rpm/usr/lib:$HOME/rpm/usr/lib64"
-export LDFLAGS="-L$HOME/rpm/usr/lib -L$HOME/rpm/usr/lib64"                                                                                                 
+export LDFLAGS="-L$HOME/rpm/usr/lib -L$HOME/rpm/usr/lib64"
 export CPATH="$CPATH:$HOME/rpm/usr/include"
 
 conda install -c conda-forge patchelf 
