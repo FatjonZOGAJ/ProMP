@@ -7,6 +7,11 @@ print(module_path)
 if module_path not in sys.path:
     sys.path.append(module_path)
 
+module_path = os.path.abspath(os.getcwd())
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from maml_zoo.utils import set_seed
 from maml_zoo.baselines.linear_baseline import LinearFeatureBaseline
 from maml_zoo.envs.point_envs.point_env_2d import MetaPointEnv
