@@ -35,7 +35,9 @@ maml_zoo_path = '/'.join(os.path.realpath(os.path.dirname(__file__)).split('/')[
 def main(config):
     baseline = LinearFeatureBaseline()
     env = normalize(eval(config['env'])(evaluate_out_of_sample_low=config['oos_low'],
-                                        evaluate_out_of_sample_high=config['oos_high']))
+                                        evaluate_out_of_sample_high=config['oos_high'],
+                                        fixed_tasks=config['fixed_tasks'],
+                                        n_fixed_tasks=config['n_fixed_tasks']))
     # env = HopperRandParamsEnv(3.5)
     policy = MetaGaussianMLPPolicy(
         name="meta-policy",
@@ -110,6 +112,10 @@ if __name__ == "__main__":
     parser.add_argument("--num_eval_grad_steps", type=int, default=2)
     parser.add_argument("--oos_low", type=int, default=0)
     parser.add_argument("--oos_high", type=float, default=1)  # percentage, 1 = 2 * PI
+
+    # Fixed Tasks parameters
+    parser.add_argument("--fixed_tasks", type=bool, default=False)
+    parser.add_argument("--n_fixed_tasks", type=int, default=0)
 
     args = parser.parse_args(sys.argv[1:])
     args.oos_high = 2 * np.pi * args.oos_high

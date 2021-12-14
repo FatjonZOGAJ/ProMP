@@ -4,23 +4,40 @@ from maml_zoo.logger import logger
 import gym
 from gym.envs.mujoco.mujoco_env import MujocoEnv
 
+
 class AntRandGoalEnv(MetaEnv, gym.utils.EzPickle, MujocoEnv):
-    def __init__(self, evaluate_out_of_sample_low=0, evaluate_out_of_sample_high=2 * np.pi):
-        self.evaluate_out_of_sample_low = evaluate_out_of_sample_low # TODO current implementation only works with 0
+    def __init__(self, evaluate_out_of_sample_low=0, evaluate_out_of_sample_high=2 * np.pi, fixed_tasks=False,
+                 n_fixed_tasks=0):
+        self.evaluate_out_of_sample_low = evaluate_out_of_sample_low  # TODO current implementation only works with 0
         self.evaluate_out_of_sample_high = evaluate_out_of_sample_high
+
+        self.fixed_tasks = False  # has to be before if condition
+        if fixed_tasks:
+            self.fixed_tasks_pool = self.sample_tasks(n_fixed_tasks)
+            self.rng = np.random.default_rng()
+        self.fixed_tasks = fixed_tasks  # has to be after above if condition
+
         self.set_task(self.sample_tasks(1)[0])
         MujocoEnv.__init__(self, 'ant.xml', 5)
         gym.utils.EzPickle.__init__(self)
 
     def sample_tasks(self, n_tasks, evaluate_out_of_sample=False):
-        offset = 0
-        max = self.evaluate_out_of_sample_high # 2 * np.pi
-        if evaluate_out_of_sample:  # for testing
-            offset = self.evaluate_out_of_sample_high
-            max = (2 * np.pi - self.evaluate_out_of_sample_high)
-        a = offset + np.random.random(n_tasks) * max
-        r = 3 * np.random.random(n_tasks) ** 0.5
-        return np.stack((r * np.cos(a), r * np.sin(a)), axis=-1)
+        if self.fixed_tasks:
+            if evaluate_out_of_sample:
+                a = np.random.random(n_tasks) * 2 * np.pi
+                r = 3 * np.random.random(n_tasks) ** 0.5
+                return np.stack((r * np.cos(a), r * np.sin(a)), axis=-1)
+            else:
+                return self.rng.choice(self.fixed_tasks_pool, n_tasks, replace=True)
+        else:
+            offset = 0
+            max = self.evaluate_out_of_sample_high  # 2 * np.pi
+            if evaluate_out_of_sample:  # for testing
+                offset = self.evaluate_out_of_sample_high
+                max = (2 * np.pi - self.evaluate_out_of_sample_high)
+            a = offset + np.random.random(n_tasks) * max
+            r = 3 * np.random.random(n_tasks) ** 0.5
+            return np.stack((r * np.cos(a), r * np.sin(a)), axis=-1)
 
     def set_task(self, task):
         """
@@ -76,10 +93,10 @@ class AntRandGoalEnv(MetaEnv, gym.utils.EzPickle, MujocoEnv):
         progs = [np.mean(path["env_infos"]["reward_forward"]) for path in paths]
         ctrl_cost = [-np.mean(path["env_infos"]["reward_ctrl"]) for path in paths]
 
-        logger.logkv(prefix+'AverageForwardReturn', np.mean(progs))
-        logger.logkv(prefix+'MaxForwardReturn', np.max(progs))
-        logger.logkv(prefix+'MinForwardReturn', np.min(progs))
-        logger.logkv(prefix+'StdForwardReturn', np.std(progs))
+        logger.logkv(prefix + 'AverageForwardReturn', np.mean(progs))
+        logger.logkv(prefix + 'MaxForwardReturn', np.max(progs))
+        logger.logkv(prefix + 'MinForwardReturn', np.min(progs))
+        logger.logkv(prefix + 'StdForwardReturn', np.std(progs))
 
         logger.logkv(prefix + 'AverageCtrlCost', np.mean(ctrl_cost))
 
@@ -87,6 +104,7 @@ class AntRandGoalEnv(MetaEnv, gym.utils.EzPickle, MujocoEnv):
 if __name__ == "__main__":
     env = AntRandGoalEnv()
     import time
+
     while True:
         env.reset()
         for _ in range(100):
