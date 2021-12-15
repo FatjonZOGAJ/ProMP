@@ -16,6 +16,7 @@ from maml_zoo.baselines.linear_baseline import LinearFeatureBaseline
 from maml_zoo.envs.mujoco_envs.half_cheetah_rand_direc import HalfCheetahRandDirecEnv
 from maml_zoo.envs.mujoco_envs.ant_rand_goal import AntRandGoalEnv
 from maml_zoo.envs.rl2_env import rl2env
+from maml_zoo.utils.utils import set_seed
 from maml_zoo.algos.vpg import VPG
 from maml_zoo.algos.ppo import PPO
 from maml_zoo.trainer_out_of_sample import Trainer

@@ -14,6 +14,7 @@ from maml_zoo.envs.rl2_env import rl2env
 from maml_zoo.algos.vpg import VPG
 from maml_zoo.algos.ppo import PPO
 from maml_zoo.trainer import Trainer
+from maml_zoo.utils.utils import set_seed
 from maml_zoo.samplers.maml_sampler import MAMLSampler
 from maml_zoo.samplers.rl2_sample_processor import RL2SampleProcessor
 from maml_zoo.policies.meta_gaussian_mlp_policy import MetaGaussianMLPPolicy

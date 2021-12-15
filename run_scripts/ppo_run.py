@@ -14,6 +14,7 @@ from maml_zoo.envs.mujoco_envs.ant_rand_goal import AntRandGoalEnv
 from maml_zoo.envs.normalized_env import normalize
 from maml_zoo.meta_algos.ppo_maml import PPOMAML
 from maml_zoo.meta_trainer import Trainer
+from maml_zoo.utils.utils import set_seed
 from maml_zoo.samplers.maml_sampler import MAMLSampler
 from maml_zoo.samplers.maml_sample_processor import MAMLSampleProcessor
 from maml_zoo.policies.meta_gaussian_mlp_policy import MetaGaussianMLPPolicy
