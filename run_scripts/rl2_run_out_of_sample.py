@@ -7,13 +7,18 @@ print(module_path)
 if module_path not in sys.path:
     sys.path.append(module_path)
 
+module_path = os.path.abspath(os.getcwd())
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from maml_zoo.baselines.linear_baseline import LinearFeatureBaseline
 from maml_zoo.envs.mujoco_envs.half_cheetah_rand_direc import HalfCheetahRandDirecEnv
 from maml_zoo.envs.mujoco_envs.ant_rand_goal import AntRandGoalEnv
 from maml_zoo.envs.rl2_env import rl2env
 from maml_zoo.algos.vpg import VPG
 from maml_zoo.algos.ppo import PPO
-from maml_zoo.trainer import Trainer
+from maml_zoo.trainer_out_of_sample import Trainer
 from maml_zoo.samplers.maml_sampler import MAMLSampler
 from maml_zoo.samplers.rl2_sample_processor import RL2SampleProcessor
 from maml_zoo.policies.meta_gaussian_mlp_policy import MetaGaussianMLPPolicy
@@ -30,7 +35,10 @@ deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 def main(config):
     baseline = LinearFeatureBaseline()
-    env = rl2env(eval(config['env'])())
+    env = rl2env(eval(config['env'])(evaluate_out_of_sample_low=config['oos_low'],
+                                     evaluate_out_of_sample_high=config['oos_high'],
+                                     fixed_tasks=config['fixed_tasks'],
+                                     n_fixed_tasks=config['n_fixed_tasks']))
     obs_dim = np.prod(env.observation_space.shape) + np.prod(env.action_space.shape) + 1 + 1
     policy = GaussianRNNPolicy(
             name="meta-policy",
@@ -72,6 +80,7 @@ def main(config):
         sampler=sampler,
         sample_processor=sample_processor,
         n_itr=config['n_itr'],
+        evaluate_out_of_sample=config['eval_oos']
     )
     trainer.train()
 
@@ -82,7 +91,20 @@ if __name__=="__main__":
     parser.add_argument("--n_itr", type=int)
     parser.add_argument("--exp_name", type=str)
     parser.add_argument("--env", type=str)
+    parser.add_argument("--seed", type=int, default=1)
+
+    # Out of sample parameters
+    parser.add_argument("--eval_oos", type=bool, default=True)
+    parser.add_argument("--oos_low", type=int, default=0)
+    parser.add_argument("--oos_high", type=float, default=1)  # percentage, 1 = 2 * PI
+
+    # Fixed Tasks parameters
+    parser.add_argument("--fixed_tasks", type=bool, default=False)
+    parser.add_argument("--n_fixed_tasks", type=int, default=0)
+
     args = parser.parse_args(sys.argv[1:])
+    args.oos_high = 2 * np.pi * args.oos_high
+    set_seed(args.seed)
 
     idx = np.random.randint(0, 1000)
     data_path = maml_zoo_path + f'/data/rl2/test_{args.exp_name}_{idx}'

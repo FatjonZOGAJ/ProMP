@@ -90,8 +90,10 @@ if __name__=="__main__":
     parser.add_argument("--rollouts_per_meta_task", type=int, default=20)
     parser.add_argument("--exp_name", type=str)
     parser.add_argument("--env", type=str)
+    parser.add_argument("--seed", type=int, default=1)
     args = parser.parse_args(sys.argv[1:])
 
+    set_seed(args.seed)
     idx = np.random.randint(0, 1000)
     data_path = maml_zoo_path + f'/data/ppo/test_{args.exp_name}_{idx}'
     logger.configure(dir=data_path, format_strs=['stdout', 'log', 'csv'],

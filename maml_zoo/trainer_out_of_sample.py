@@ -31,7 +31,7 @@ class Trainer(object):
             start_itr=0,
             task=None,
             sess=None,
-            ):
+            evaluate_out_of_sample=False):
         self.algo = algo
         self.env = env
         self.sampler = sampler
@@ -41,6 +41,7 @@ class Trainer(object):
         self.n_itr = n_itr
         self.start_itr = start_itr
         self.task = task
+        self.evaluate_out_of_sample = evaluate_out_of_sample
         if sess is None:
             sess = tf.Session()
         self.sess = sess
@@ -65,6 +66,14 @@ class Trainer(object):
 
             start_time = time.time()
             for itr in range(self.start_itr, self.n_itr):
+                """ ------------------ Out of Sample Policy Evaluation ---------------------"""
+                eval_task = self.env.sample_tasks(self.sampler.meta_batch_size, evaluate_out_of_sample=self.evaluate_out_of_sample)
+                self.sampler.set_tasks(eval_task)
+                paths = self.sampler.obtain_samples(log=True, log_prefix='eval-')
+                #samples_data = self.sample_processor.process_samples(paths, log='all', log_prefix='eval-')
+                self.log_diagnostics(sum(paths.values(), []), prefix='eval-')
+
+                # Original
                 self.task = self.env.sample_tasks(self.sampler.meta_batch_size)
                 self.sampler.set_tasks(self.task)
                 itr_start_time = time.time()
