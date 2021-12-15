@@ -7,7 +7,7 @@ git checkout full_code
 Setup environment
 ```
 conda create -n ProMP python=3.6
-source activate ProMP
+conda activate ProMP
 
 pip3 install --upgrade pip
 
