@@ -39,9 +39,9 @@ def plot_data():
 
     plt.xscale('log')
     plt.legend()
-    plt.ylabel('Average Reward')
-    plt.xlabel('Steps')
-    plt.title('Half-Cheetah-Direction Environment')
+    plt.ylabel(args.ylabel)
+    plt.xlabel(args.xlabel)
+    plt.title(args.title)
     plt.grid()
     plt.savefig(f'{path}/{args.filename}')
 
@@ -53,6 +53,9 @@ if __name__ == "__main__":
     parser.add_argument("--data_paths", type=str, nargs='*')
     parser.add_argument("--filename", type=str, default='comparison.pdf')
     parser.add_argument("--disable-variant", default=False, action='store_true')
+    parser.add_argument("--title", type=str, nargs='*')
+    parser.add_argument("--xlabel", type=str, nargs='*')
+    parser.add_argument("--ylabel", type=str, nargs='*')
     args = parser.parse_args(sys.argv[1:])
 
     load_data()
