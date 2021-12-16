@@ -72,7 +72,7 @@ def load_params(params_json_path):
         if "args_data" in data:
             del data["args_data"]
         if "exp_name" not in data:
-            data["exp_name"] = params_json_path.split("/")[-2]
+            data["exp_name"] = params_json_path.split("\\")[-2] # TODO: make it work for windows \\ and linux /
     return data
 
 

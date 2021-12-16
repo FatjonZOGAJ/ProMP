@@ -30,7 +30,7 @@ def load_data():
 
 
 def plot_data():
-    path = '../data/plots'
+    path = args.path #'../data/plots'
     os.makedirs(path, exist_ok=True)
     for x_col, y_col, label, data in zip(args.step_columns, args.data_columns,args.label_columns, exps_data):
         progress = data.progress
@@ -39,8 +39,8 @@ def plot_data():
             print('N train steps:', data.progress['Number of train steps total'][-1])
             print('N train tasks:', data.params['n_train_tasks'])
             print('N iterations :', data.params['num_iterations'])
-        print('--', data.progress.keys())
-        print('--', data.params)
+        print('--PROGRESS_KEYS', data.progress.keys())
+        print('--PARAMS', data.params)
         x = progress[x_col]
         y = progress[y_col]
 
@@ -61,15 +61,18 @@ if __name__ == "__main__":
     parser.add_argument("--data_columns", type=str, nargs='*')
     parser.add_argument("--step_columns", type=str, nargs='*')
     parser.add_argument("--data_paths", type=str, nargs='*')
+    parser.add_argument("--path", type=str, default='data\paths')
     parser.add_argument("--label_columns", type=str, nargs='*')
     parser.add_argument("--filename", type=str, default='comparison.pdf')
     parser.add_argument("--disable-variant", default=False, action='store_true')
-    parser.add_argument("--title", type=str, nargs='*')
-    parser.add_argument("--xlabel", type=str, nargs='*')
-    parser.add_argument("--ylabel", type=str, nargs='*')
+    parser.add_argument("--title", type=str)
+    parser.add_argument("--xlabel", type=str)
+    parser.add_argument("--ylabel", type=str)
     args = parser.parse_args(sys.argv[1:])
+    for k, v in args.__dict__.items():
+        print(k, v)
 
     load_data()
 
     plot_data()
-    print(5)
+    print('Finished Plotting')
