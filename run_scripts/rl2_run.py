@@ -14,6 +14,7 @@ from maml_zoo.envs.rl2_env import rl2env
 from maml_zoo.algos.vpg import VPG
 from maml_zoo.algos.ppo import PPO
 from maml_zoo.trainer import Trainer
+from maml_zoo.utils.utils import set_seed
 from maml_zoo.samplers.maml_sampler import MAMLSampler
 from maml_zoo.samplers.rl2_sample_processor import RL2SampleProcessor
 from maml_zoo.policies.meta_gaussian_mlp_policy import MetaGaussianMLPPolicy
@@ -82,8 +83,10 @@ if __name__=="__main__":
     parser.add_argument("--n_itr", type=int)
     parser.add_argument("--exp_name", type=str)
     parser.add_argument("--env", type=str)
+    parser.add_argument("--seed", type=int, default=1)
     args = parser.parse_args(sys.argv[1:])
 
+    set_seed(args.seed)
     idx = np.random.randint(0, 1000)
     data_path = maml_zoo_path + f'/data/rl2/test_{args.exp_name}_{idx}'
     logger.configure(dir=data_path, format_strs=['stdout', 'log', 'csv'],
