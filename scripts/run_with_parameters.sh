@@ -1,14 +1,15 @@
 ROOT="C:\\Users\\flori\\Documents\\Fatjon"
 
+# MAML OOS
 python viskit/plot.py \
 --data_columns "Eval Step_1-AverageReturn" "Eval Step_1-AverageReturn" "Eval Step_1-AverageReturn" Step_1-AverageReturn \
 --step_columns n_timesteps n_timesteps n_timesteps n_timesteps \
---data_paths $ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_1_37\\ $ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_2_37\\ $ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_3_37\\ \ #$ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_2_37\\ \
+--data_paths $ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_1_37\\ $ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_2_37\\ $ROOT\\ProMP\\data\\ppo\\test_oos_ant_n_tasks_40_3_37\\ $ROOT\\ProMP\\data\\ppo\\test_ant_n_tasks_40_665\\ \
 --filename oos_ppo_comparison.pdf \
---title "Ant-Goal Environment" \
+--title "Ant-Dir Environment" \
 --xlabel Steps \
 --ylabel "Average Reward" \
---label_columns 90 180 270 360 \
+--label_columns 90° 180° 270° 360° \
 
 exit 0;
 
