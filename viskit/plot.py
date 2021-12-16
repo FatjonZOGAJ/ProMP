@@ -2,6 +2,16 @@ import argparse
 import os
 import sys
 
+module_path = os.path.abspath(os.getcwd() + '//..')
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+module_path = os.path.abspath(os.getcwd())
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from viskit import core
 from viskit.core import flatten
 from viskit.frontend import reload_data
@@ -22,7 +32,7 @@ def load_data():
 def plot_data():
     path = '../data/plots'
     os.makedirs(path, exist_ok=True)
-    for x_col, y_col, data in zip(args.step_columns, args.data_columns, exps_data):
+    for x_col, y_col, label, data in zip(args.step_columns, args.data_columns,args.label_columns, exps_data):
         progress = data.progress
         print(x_col, y_col, len(data.progress))
         if args.filename == 'pearl_n_tasks_comparison.pdf':
@@ -34,10 +44,10 @@ def plot_data():
         x = progress[x_col]
         y = progress[y_col]
 
-        plt.plot(x, y, label=data['params']['algo'] if 'algo' in data['params'] else
-        ('PEARL' if data['params']['exp_name'].startswith('2021_') else 'MACAW'))
+        plt.plot(x, y, label=label)
 
     plt.xscale('log')
+    # TODO: legend
     plt.legend()
     plt.ylabel(args.ylabel)
     plt.xlabel(args.xlabel)
@@ -51,6 +61,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_columns", type=str, nargs='*')
     parser.add_argument("--step_columns", type=str, nargs='*')
     parser.add_argument("--data_paths", type=str, nargs='*')
+    parser.add_argument("--label_columns", type=str, nargs='*')
     parser.add_argument("--filename", type=str, default='comparison.pdf')
     parser.add_argument("--disable-variant", default=False, action='store_true')
     parser.add_argument("--title", type=str, nargs='*')
