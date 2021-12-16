@@ -39,7 +39,9 @@ def plot_data():
             print('N train steps:', data.progress['Number of train steps total'][-1])
             print('N train tasks:', data.params['n_train_tasks'])
             print('N iterations :', data.params['num_iterations'])
-        print('--PROGRESS_KEYS', data.progress.keys())
+        print('--PROGRESS_KEYS', end='')
+        for k in sorted(data.progress.keys()):
+            print(k)
         print('--PARAMS', data.params)
         x = progress[x_col]
         y = progress[y_col]

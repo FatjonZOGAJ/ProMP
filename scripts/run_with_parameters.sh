@@ -1,4 +1,31 @@
 ROOT="C:\\Users\\flori\\Documents\\Fatjon"
+# TODO: still open varying meta batch-sizes, prohibiting dense sampling
+
+
+# PEARL OOS
+python viskit/plot.py \
+--data_columns AverageReturn_all_test_tasks AverageReturn_all_test_tasks AverageReturn_all_test_tasks  AverageReturn_all_test_tasks \
+--step_columns "Number of train steps total" "Number of train steps total" "Number of train steps total" "Number of train steps total" \
+--data_paths $ROOT\\oyster\\output\\ant-goal\\ood1\\ $ROOT\\oyster\\output\\ant-goal\\ood2\\ $ROOT\\oyster\\output\\ant-goal\\ood3\\ $ROOT\\oyster\\output\\ant-goal\\2021_12_09_00_43_56\\ \
+--filename oos_pearl_comparison.pdf \
+--title "Ant-Dir Environment" \
+--xlabel Steps \
+--ylabel "Average Reward" \
+--label_columns 90° 180° 270° 360° \
+
+exit 0;
+# RL2 OOS TODO: does not work as Eval Train column is not plotted
+python viskit/plot.py \
+--data_columns "Eval Step_1-AverageReturn" "Eval Step_1-AverageReturn" "Eval Step_1-AverageReturn" train-AverageReturn \
+--step_columns n_timesteps n_timesteps n_timesteps n_timesteps \
+--data_paths $ROOT\\ProMP\\data\\rl2\\test_oos_ant_n_tasks_100_1_37\\ $ROOT\\ProMP\\data\\rl2\\test_oos_ant_n_tasks_100_2_37\\ $ROOT\\ProMP\\data\\rl2\\test_oos_ant_n_tasks_100_3_37\\ $ROOT\\ProMP\\data\\rl2\\test_ant_n_tasks_100_594\\ \
+--filename oos_rl2_comparison.pdf \
+--title "Ant-Dir Environment" \
+--xlabel Steps \
+--ylabel "Average Reward" \
+--label_columns 90° 180° 270° 360° \
+
+exit 0;
 
 # MAML OOS
 python viskit/plot.py \
@@ -13,6 +40,7 @@ python viskit/plot.py \
 
 exit 0;
 
+# Cheetah-Dir Algorithm comparison
 python viskit/plot.py \
 --data_columns Step_1-AverageReturn Step_1-AverageReturn train-AverageReturn AverageReturn_all_test_tasks avgReward \
 --step_columns n_timesteps n_timesteps n_timesteps "Number of train steps total" \
