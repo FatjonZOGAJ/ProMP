@@ -70,7 +70,7 @@ class Trainer(object):
                 eval_task = self.env.sample_tasks(self.sampler.meta_batch_size, evaluate_out_of_sample=self.evaluate_out_of_sample)
                 self.sampler.set_tasks(eval_task)
                 paths = self.sampler.obtain_samples(log=True, log_prefix='eval-')
-                #samples_data = self.sample_processor.process_samples(paths, log='all', log_prefix='eval-')
+                self.sample_processor.process_samples(paths, log='all', log_prefix='eval-')
                 self.log_diagnostics(sum(paths.values(), []), prefix='eval-')
 
                 # Original
