@@ -6,6 +6,7 @@ PyPrind
 Pillow
 moviepy
 mpi4py
+mujoco-py==2.0.2.0
 click
 tensorflow==1.15
 cloudpickle
